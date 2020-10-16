@@ -1,10 +1,13 @@
 import React, { useRef, useCallback } from 'react';
 
+import * as Yup from 'yup';
+
 import { FiCheckSquare } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from './styles';
 import Modal from '../Modal';
 import Input from '../Input';
+import api from '../../services/api';
 
 interface IFoodPlate {
   id: number;
@@ -37,7 +40,34 @@ const ModalAddFood: React.FC<IModalProps> = ({
 
   const handleSubmit = useCallback(
     async (data: ICreateFoodData) => {
-      // TODO ADD A NEW FOOD AND CLOSE THE MODAL
+
+      const schema = Yup.object().shape({
+        image: Yup.string()
+        .matches(
+            /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+            'Enter correct url!'
+        )
+        .required('Please enter website'),
+        name: Yup.string().required(),
+        price: Yup.string().required(),
+        description: Yup.string().required(),
+      })
+
+      await schema.validate(data);
+
+      const formFood = {
+        name: data.name,
+        image: data.image,
+        price: data.price,
+        description: data.description,
+        available: true
+      }
+
+      const responseFood = await api.post<IFoodPlate>('/foods', formFood);
+
+      handleAddFood(responseFood.data)
+
+      setIsOpen();
     },
     [handleAddFood, setIsOpen],
   );
