@@ -1,4 +1,4 @@
-# Desafio 10 10 Rockeseat - GoRestaurant
+# Desafio 10 Rockeseat - GoRestaurant
 
 Desafio formulado durante o BootCamp da escola [Rocketseat](https://rocketseat.com.br/)
 
